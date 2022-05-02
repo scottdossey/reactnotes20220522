@@ -10,25 +10,57 @@
 //method..but it is critical that I teach the functional style
 //because that is the PREFERRED style going forward.
 
+import React from 'react';
 import "../css/Board.css";
-import Note from './Note';
+import Note from './NoteFunctional';
 
-function Board() {
-    let x = [1,2,3,4,5];
+function Board(props) {
+    /* We need to add state to board to hold the notes. */
+    let [notes, setNotes] = React.useState([]);
+
+    function addNote() {                
+        //Make a copy of notes so we don't modify
+        //notes directly.
+        let newNoteArray= [];
+        for(let i=0; i<notes.length; ++i) {
+            newNoteArray.push(notes[i]);         
+        }
+        newNoteArray.push(
+          {
+            id: Date.now() //Quick and dirty unique id
+          }
+        );
+        setNotes(newNoteArray);          
+    }
+
+    function deleteNote(id) {        
+        let newNoteArray = []
+        for(let i=0; i<notes.length; ++i) {
+            if(notes[i].id !== id) {
+               newNoteArray.push(notes[i]);
+            }
+        }
+        setNotes(newNoteArray);
+    }
+
+    console.log(notes);
     return (
-        <div>
-            <div className="div-board">
-                <div className="row">  
-                    <Note title="Class Notes" body="Always use constructors when extending another class"/>
-                    <Note title="My New Address" body="2001 N Lonhill Phoenix, AZ 81234"/>
-                    <Note title="React Notes" body="Everything in React is a component"/>                  
-                    <Note title={x}/>
-                </div>
-            </div>
-            <div>
-                <button className="btn btn-success add-button">Add</button>
-            </div>
+        <div>        
+        <div className="div-board">
+          <div className="row">
+            {notes.map(
+              note=>{
+                   return (<Note key={note.id} id={note.id} 
+                            deleteHandler={deleteNote}/>
+                   );
+              }              
+            )}                                          
+          </div>
         </div>
+        <div>
+          <button className="btn btn-success add-button" onClick={addNote}>Add</button>
+        </div>
+      </div>
     );
 }
 
